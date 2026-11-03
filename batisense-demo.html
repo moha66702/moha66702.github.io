@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BatiSense Pro | Dashboard demo</title>
+<meta name="description" content="Demo of the BatiSense Pro dashboard running on simulated sensor data.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='10' fill='%23050810'/%3E%3Cpolygon points='24,6 40,22 40,40 8,40 8,22' fill='none' stroke='%2300f5a0' stroke-width='3' stroke-linejoin='round'/%3E%3Ccircle cx='24' cy='30' r='4' fill='%2300f5a0'/%3E%3Ccircle cx='24' cy='10' r='3' fill='%2300d4e0'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg0:#040711;--bg1:#070c17;--bg3:#101828;--bg4:#162034;--b0:rgba(255,255,255,.04);--b1:rgba(255,255,255,.08);
+--green:#00f5a0;--teal:#00d4e0;--blue:#4d8dff;--amber:#ffc233;--red:#ff4d6b;--violet:#a06bff;
+--t0:#dce8ff;--t1:#8aa0c6;--t2:#6a7fa3;--r:16px;--rsm:9px;--rxs:6px;
+--fui:'Syne',sans-serif;--fmono:'DM Mono',monospace;--fbody:'Inter',sans-serif;
+--sidebar-w:240px;--topbar-h:56px;--topbar-bg:rgba(7,12,23,.8);--sidebar-bg:linear-gradient(180deg,#070c17 0%,#040711 100%);
+--card-bg:#0b1120;--card-border:rgba(255,255,255,.08);--card-shadow:0 4px 24px rgba(0,0,0,.3);--grid:rgba(255,255,255,.06);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg0:#f0f3fa;--bg1:#f5f7fd;--bg3:#f0f4ff;--bg4:#e4ebf8;--b0:rgba(0,0,0,.04);--b1:rgba(0,0,0,.09);--t0:#0c1732;--t1:#3a4f72;--t2:#5d6f93;--topbar-bg:rgba(255,255,255,.85);--sidebar-bg:linear-gradient(180deg,#f5f7fd,#f0f3fa);--card-bg:#fff;--card-border:rgba(0,0,0,.08);--card-shadow:0 2px 16px rgba(0,0,0,.06);--grid:rgba(0,0,0,.07);--green:#008f5d;--teal:#00808a;--blue:#2f6fe0;--amber:#a86f00;--red:#d2304f;--violet:#7a45d6;color-scheme:light}}
+:root[data-theme="light"]{--bg0:#f0f3fa;--bg1:#f5f7fd;--bg3:#f0f4ff;--bg4:#e4ebf8;--b0:rgba(0,0,0,.04);--b1:rgba(0,0,0,.09);--t0:#0c1732;--t1:#3a4f72;--t2:#5d6f93;--topbar-bg:rgba(255,255,255,.85);--sidebar-bg:linear-gradient(180deg,#f5f7fd,#f0f3fa);--card-bg:#fff;--card-border:rgba(0,0,0,.08);--card-shadow:0 2px 16px rgba(0,0,0,.06);--grid:rgba(0,0,0,.07);--green:#008f5d;--teal:#00808a;--blue:#2f6fe0;--amber:#a86f00;--red:#d2304f;--violet:#7a45d6;color-scheme:light}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px;-webkit-font-smoothing:antialiased;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{font-family:var(--fbody);background:var(--bg0);color:var(--t0);min-height:100vh;overflow-x:hidden}
+button{cursor:pointer;font-family:var(--fui)}
+button:focus-visible{outline:3px solid var(--green);outline-offset:2px}
+.ic{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+#welcome{position:fixed;inset:0;z-index:1000;background:var(--bg0);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .5s}
+#welcome.hide{opacity:0;pointer-events:none}
+.wov-text{font:800 34px var(--fui);letter-spacing:-1px;color:var(--green)}
+.wov-hint{font:10px var(--fmono);color:var(--t2);letter-spacing:2px}
+.wov-bar{width:240px;height:3px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.wov-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--teal),var(--blue));animation:fill 1.3s ease forwards}
+@keyframes fill{to{width:100%}}
+.app{display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--sidebar-bg);border-right:1px solid var(--b0);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;z-index:50}
+.s-logo{padding:20px 18px 16px;border-bottom:1px solid var(--b0);display:flex;align-items:center;gap:12px}
+.s-logo svg{width:38px;height:38px;border-radius:10px}
+.s-logo-name{font:800 16px var(--fui);letter-spacing:-.5px}
+.s-logo-sub{font:10px var(--fmono);color:var(--green);text-transform:uppercase;letter-spacing:2px}
+.s-nav{padding:10px 8px;flex:1}
+.s-nav-sec{font:700 9px var(--fui);color:var(--t2);text-transform:uppercase;letter-spacing:1.5px;padding:14px 12px 5px}
+.nav-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;min-height:44px;border-radius:11px;border:none;background:none;color:var(--t1);font:500 13px var(--fbody);width:100%;text-align:left;margin-bottom:3px;position:relative;transition:all .25s}
+.nav-btn::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:0;background:var(--green);border-radius:3px;transition:height .3s}
+.nav-btn .ic{font-size:15px;opacity:.7}
+.nav-btn:hover{background:var(--bg3);color:var(--t0)}
+.nav-btn.active{background:rgba(0,245,160,.1);color:var(--green);font-weight:600}
+.nav-btn.active::before{height:65%}.nav-btn.active .ic{opacity:1}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font:700 9px var(--fui);padding:2px 7px;border-radius:12px;min-width:20px;text-align:center}
+.s-footer{padding:12px 8px;border-top:1px solid var(--b0)}
+.conn{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:var(--rxs);background:var(--b0);font:11px var(--fmono);color:var(--t1)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--t2);flex-shrink:0}
+.dot.ok{background:var(--green);box-shadow:0 0 10px var(--green)}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.topbar{padding:8px 28px;min-height:var(--topbar-h);border-bottom:1px solid var(--b0);background:var(--topbar-bg);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:40}
+.topbar h1{font:700 18px var(--fui);letter-spacing:-.5px}
+.topbar p{font:10.5px var(--fmono);color:var(--t2);margin-top:2px}
+.topbar-r{display:flex;gap:8px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:0 14px;min-height:44px;border-radius:var(--rxs);border:1px solid var(--b1);background:var(--card-bg);color:var(--t0);font:500 12px var(--fbody);transition:all .25s}
+.btn:hover{border-color:var(--green);color:var(--green)}
+.btn.danger{border-color:var(--red);color:var(--red)}
+.note{background:rgba(255,194,51,.12);border:1px solid var(--amber);color:var(--t0);border-radius:var(--rsm);padding:10px 14px;font-size:12.5px;margin-bottom:18px}
+.content{padding:22px 28px;flex:1}
+.sec{display:none}.sec.active{display:block}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:18px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:18px}
+.gauto{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.kcard{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--r);padding:18px 20px;position:relative;overflow:hidden;box-shadow:var(--card-shadow)}
+.kcard::after{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kcard.g::after{background:linear-gradient(90deg,var(--green),var(--teal))}.kcard.t::after{background:linear-gradient(90deg,var(--teal),var(--blue))}
+.kcard.b::after{background:linear-gradient(90deg,var(--blue),var(--violet))}.kcard.a::after{background:linear-gradient(90deg,var(--amber),var(--red))}.kcard.r::after{background:var(--red)}
+.kcard-top{display:flex;justify-content:space-between;margin-bottom:10px}
+.kcard-lbl{font:700 10.5px var(--fui);color:var(--t2);text-transform:uppercase;letter-spacing:1px}
+.kcard-top .ic{font-size:17px}
+.kcard-val{font:800 30px var(--fui);letter-spacing:-2px;line-height:1;margin-bottom:6px}
+.kcard-val sup{font-size:13px;font-weight:500;margin-left:3px;opacity:.7}
+.kcard-sub{font-size:11px;color:var(--t1)}
+.panel{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--r);padding:20px 22px;margin-bottom:18px;box-shadow:var(--card-shadow)}
+.pt{font:600 13.5px var(--fui);display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.pt .ic{color:var(--green)}
+.cbox{position:relative;height:220px}
+.door-badge{display:inline-flex;align-items:center;gap:9px;padding:11px 20px;border-radius:var(--r);font:700 13px var(--fui);border:2px solid}
+.door-badge.open{background:rgba(255,77,107,.1);border-color:var(--red);color:var(--red)}
+.door-badge.closed{background:rgba(0,245,160,.07);border-color:var(--green);color:var(--green)}
+.cons-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--r);padding:22px;text-align:center;box-shadow:var(--card-shadow)}
+.cons-ico{font-size:34px;margin-bottom:10px}
+.cons-card.water .cons-ico{color:var(--teal)}.cons-card.elec .cons-ico{color:var(--violet)}.cons-card.gas .cons-ico{color:var(--amber)}
+.cons-num{font:800 34px var(--fui);letter-spacing:-2.5px}
+.cons-unit{font-size:11px;color:var(--t2);margin-top:5px}
+.ncard{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--r);padding:18px;box-shadow:var(--card-shadow)}
+.nc-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid var(--b0)}
+.nc-name{font:700 14px var(--fui)}
+.nc-status{font:700 10px var(--fbody);padding:4px 10px;border-radius:20px;background:rgba(0,245,160,.12);color:var(--green)}
+.nc-status.alert{background:rgba(255,77,107,.14);color:var(--red)}
+.nc-type{font-size:11px;color:var(--t2);margin:-6px 0 10px}
+.nc-sensors{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.ns{background:var(--bg3);border:1px solid var(--b0);border-radius:var(--rxs);padding:11px 12px}
+.ns-val{font:700 14px var(--fui);white-space:nowrap}.ns-lbl{font-size:10px;color:var(--t2)}
+.alert-list{display:flex;flex-direction:column;gap:12px;list-style:none}
+.al{display:flex;gap:14px;background:var(--card-bg);border:1px solid var(--card-border);border-left:4px solid var(--blue);border-radius:var(--rsm);padding:14px 16px}
+.al.alert{border-left-color:var(--red)}
+.al b{font:700 12px var(--fui);text-transform:uppercase;letter-spacing:.06em}.al.alert b{color:var(--red)}
+.al small{display:block;color:var(--t2);font:11px var(--fmono)}
+.empty{color:var(--t2);padding:12px 2px}
+footer{padding:8px 0 4px;color:var(--t2);font-size:12px;max-width:90ch}
+@media (max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:1fr}}
+@media (max-width:900px){.app{flex-direction:column}.sidebar{position:static;width:100%;height:auto;flex-direction:row;align-items:center;border-right:0;border-bottom:1px solid var(--b0)}
+.s-logo{border:0;padding:10px 14px}.s-logo-sub,.s-footer,.s-nav-sec{display:none}.s-nav{display:flex;gap:4px;padding:6px;overflow-x:auto}.nav-btn{width:auto;white-space:nowrap;margin:0}
+.g2{grid-template-columns:1fr}.content{padding:16px}.topbar{padding:8px 16px;position:static}}
+@media (max-width:520px){.g4{grid-template-columns:1fr}.s-logo-name{display:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol>
+<symbol id="i-cpu" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v4M15 1v4M9 19v4M15 19v4M1 9h4M1 15h4M19 9h4M19 15h4"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></symbol>
+<symbol id="i-therm" viewBox="0 0 24 24"><path d="M14 14.8V3.5a2.5 2.5 0 0 0-5 0v11.3a4.5 4.5 0 1 0 5 0z"/></symbol>
+<symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 2.7l5.7 5.7a8 8 0 1 1-11.4 0z"/></symbol>
+<symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
+<symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-2 1-3 2-4 0 2 1 3 2 3 0-4-1-7 2-11z"/></symbol>
+<symbol id="i-door" viewBox="0 0 24 24"><path d="M4 21h16M6 21V3h12v18M15 12h.01"/></symbol>
+<symbol id="i-theme" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></symbol>
+</defs></svg>
+
+<div id="welcome"><svg width="72" height="72" viewBox="0 0 48 48" aria-hidden="true"><polygon points="24,6 40,22 40,40 8,40 8,22" fill="none" stroke="#00f5a0" stroke-width="3" stroke-linejoin="round"/><circle cx="24" cy="30" r="4" fill="#00f5a0"/><circle cx="24" cy="10" r="3" fill="#00d4e0"/></svg>
+<div class="wov-text">BatiSense Pro</div><div class="wov-bar"><i></i></div><div class="wov-hint">LOADING SIMULATED DATA</div></div>
+
+<div class="app">
+<aside class="sidebar">
+  <div class="s-logo"><svg viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="10" fill="#050810"/><polygon points="24,6 40,22 40,40 8,40 8,22" fill="none" stroke="#00f5a0" stroke-width="3" stroke-linejoin="round"/><circle cx="24" cy="30" r="4" fill="#00f5a0"/><circle cx="24" cy="10" r="3" fill="#00d4e0"/></svg>
+    <div><div class="s-logo-name">BatiSense Pro</div><div class="s-logo-sub">Demo</div></div></div>
+  <nav class="s-nav" aria-label="Sections"><div class="s-nav-sec">Monitoring</div>
+    <button class="nav-btn active" data-s="overview" type="button"><svg class="ic"><use href="#i-grid"/></svg>Overview</button>
+    <button class="nav-btn" data-s="nodes" type="button"><svg class="ic"><use href="#i-cpu"/></svg>Nodes</button>
+    <button class="nav-btn" data-s="alerts" type="button"><svg class="ic"><use href="#i-bell"/></svg>Alerts<span class="nav-badge" id="badge" hidden>0</span></button></nav>
+  <div class="s-footer"><div class="conn"><span class="dot ok" id="dot"></span><span id="state">Simulated stream</span></div></div>
+</aside>
+<div class="main">
+  <div class="topbar"><div><h1 id="title">Overview</h1><p id="clock">demo</p></div>
+    <div class="topbar-r"><button class="btn danger" id="b-gas" type="button">Simulate gas leak</button><button class="btn" id="b-door" type="button">Simulate door opening</button><button class="btn" id="b-pause" type="button">Pause</button><button class="btn" id="b-theme" type="button"><svg class="ic"><use href="#i-theme"/></svg>Theme</button></div></div>
+  <div class="content">
+    <div class="note" role="note">Demo mode: every value is simulated in your browser. This is not a real building.</div>
+
+    <section class="sec active" id="s-overview">
+      <div class="g4">
+        <div class="kcard g"><div class="kcard-top"><span class="kcard-lbl">Temperature</span><svg class="ic" style="color:var(--green)"><use href="#i-therm"/></svg></div><div class="kcard-val"><span id="k-temp">0</span><sup>C</sup></div><div class="kcard-sub">Average of 3 rooms</div></div>
+        <div class="kcard b"><div class="kcard-top"><span class="kcard-lbl">Humidity</span><svg class="ic" style="color:var(--blue)"><use href="#i-drop"/></svg></div><div class="kcard-val"><span id="k-hum">0</span><sup>%</sup></div><div class="kcard-sub">Average of 3 rooms</div></div>
+        <div class="kcard t"><div class="kcard-top"><span class="kcard-lbl">Power</span><svg class="ic" style="color:var(--teal)"><use href="#i-bolt"/></svg></div><div class="kcard-val"><span id="k-pow">0</span><sup>W</sup></div><div class="kcard-sub">Energy node</div></div>
+        <div class="kcard a" id="k-gascard"><div class="kcard-top"><span class="kcard-lbl">Gas</span><svg class="ic" style="color:var(--amber)"><use href="#i-flame"/></svg></div><div class="kcard-val"><span id="k-gas">0</span><sup>ppm</sup></div><div class="kcard-sub" id="k-gas-sub">Normal</div></div>
+      </div>
+      <div class="g3">
+        <div class="cons-card water"><svg class="ic cons-ico"><use href="#i-drop"/></svg><div class="cons-num" id="c-water">0</div><div class="cons-unit">litres today</div></div>
+        <div class="cons-card elec"><svg class="ic cons-ico"><use href="#i-bolt"/></svg><div class="cons-num" id="c-elec">0</div><div class="cons-unit">kWh today</div></div>
+        <div class="cons-card gas"><svg class="ic cons-ico"><use href="#i-flame"/></svg><div class="cons-num" id="c-gas">0</div><div class="cons-unit">m3 today</div></div>
+      </div>
+      <div class="g2">
+        <div class="panel"><div class="pt"><svg class="ic"><use href="#i-therm"/></svg>Temperature (C)</div><div class="cbox"><canvas id="c-temp" role="img" aria-label="Temperature of kitchen, salon and room"></canvas></div></div>
+        <div class="panel"><div class="pt"><svg class="ic"><use href="#i-bolt"/></svg>Power (W)</div><div class="cbox"><canvas id="c-pow" role="img" aria-label="Electric power in watts"></canvas></div></div>
+        <div class="panel"><div class="pt"><svg class="ic"><use href="#i-flame"/></svg>Gas (ppm) and threshold</div><div class="cbox"><canvas id="c-gaschart" role="img" aria-label="Gas level and alert threshold"></canvas></div></div>
+        <div class="panel"><div class="pt"><svg class="ic"><use href="#i-door"/></svg>Main door</div><span class="door-badge closed" id="door"><svg class="ic"><use href="#i-door"/></svg><span id="door-t">Closed</span></span></div>
+      </div>
+    </section>
+
+    <section class="sec" id="s-nodes"><div class="gauto" id="nodes"></div></section>
+
+    <section class="sec" id="s-alerts"><ul class="alert-list" id="log" aria-live="polite"></ul><p class="empty" id="empty">No events yet. Use the buttons at the top to trigger some.</p></section>
+
+    <footer>Demo with simulated data. The real BatiSense Pro reads its nodes over LoRa at 433 MHz (SF7, 125 kHz, sync word 0x34) into a Raspberry Pi gateway running Flask, SQLite and server-sent events. The admin panel is not part of this demo. The 1000 ppm gas threshold is an example value.</footer>
+  </div>
+</div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var THR=1000,paused=false,leak=0,doorT=0,gasAlert=false,unread=0,water=186.4,gasM3=3.21;
+  var S={kitchen:{temp:24.6,hum:48,gas:420,motion:0,vib:0},salon:{temp:22.8,hum:45,motion:0},door:{open:0,vib:0},room:{temp:21.9,hum:50,motion:0},water:{flow:0,index:1284.532},electricity:{power:640,energy:12.4},gas:{gas:380}};
+  var META=[["kitchen","Kitchen","STM32 Nucleo: DHT11, MQ-4, PIR, SW-420"],["salon","Salon","Temperature, humidity, motion"],["door","Door","Contact and vibration"],["room","Room","Temperature, humidity, motion"],["water","Water","ESP32-CAM, meter read by OCR"],["electricity","Electricity","Arduino, optical pulse counter"],["gas","Gas node","MQ-4 gas sensor"]];
+  function walk(v,s,a,b){return Math.min(b,Math.max(a,v+(Math.random()-.5)*s))}
+  function f(v,d){return v.toFixed(d)}
+  function yn(v,a,b){return v?a:b}
+  function rows(id){var s=S[id];
+    if(id==="kitchen")return[["Temperature",f(s.temp,1)+" C"],["Humidity",Math.round(s.hum)+" %"],["Gas",Math.round(s.gas)+" ppm"],["Motion",yn(s.motion,"Detected","None")],["Vibration",yn(s.vib,"Detected","None")]];
+    if(id==="salon"||id==="room")return[["Temperature",f(s.temp,1)+" C"],["Humidity",Math.round(s.hum)+" %"],["Motion",yn(s.motion,"Detected","None")]];
+    if(id==="door")return[["Door",yn(s.open,"Open","Closed")],["Vibration",yn(s.vib,"Detected","None")]];
+    if(id==="water")return[["Flow",f(s.flow,1)+" L/min"],["Index",f(s.index,3)+" m3"]];
+    if(id==="electricity")return[["Power",Math.round(s.power)+" W"],["Energy",f(s.energy,2)+" kWh"]];
+    return[["Gas",Math.round(s.gas)+" ppm"]]}
+  function inAlert(id){return(id==="kitchen"||id==="gas")&&S[id].gas>THR}
+  $("nodes").innerHTML=META.map(function(m){return '<article class="ncard" id="n-'+m[0]+'"><div class="nc-head"><span class="nc-name">'+m[1]+'</span><span class="nc-status">Online</span></div><p class="nc-type">'+m[2]+'</p><div class="nc-sensors"></div></article>'}).join("");
+  function stamp(ts){return new Date(ts).toTimeString().slice(0,8)}
+  function paint(){var avgT=(S.kitchen.temp+S.salon.temp+S.room.temp)/3,avgH=(S.kitchen.hum+S.salon.hum+S.room.hum)/3,a=S.kitchen.gas>THR;
+    $("k-temp").textContent=f(avgT,1);$("k-hum").textContent=Math.round(avgH);$("k-pow").textContent=Math.round(S.electricity.power);$("k-gas").textContent=Math.round(S.kitchen.gas);
+    $("k-gas-sub").textContent=a?"Above threshold":"Normal";$("k-gascard").className="kcard "+(a?"r":"a");
+    $("c-water").textContent=f(water,0);$("c-elec").textContent=f(S.electricity.energy,1);$("c-gas").textContent=f(gasM3,2);
+    $("door").className="door-badge "+(S.door.open?"open":"closed");$("door-t").textContent=S.door.open?"Open":"Closed";
+    META.forEach(function(m){var el=$("n-"+m[0]),al=inAlert(m[0]),st=el.querySelector(".nc-status");st.textContent=al?"Alert":"Online";st.className="nc-status"+(al?" alert":"");
+      el.querySelector(".nc-sensors").innerHTML=rows(m[0]).map(function(r){return '<div class="ns"><div class="ns-val">'+r[1]+'</div><div class="ns-lbl">'+r[0]+'</div></div>'}).join("")})}
+  function addEvent(level,node,msg,ts){var li=document.createElement("li");li.className="al "+level;
+    li.innerHTML='<div><b>'+(level==="alert"?"Alert":"Info")+'</b><small>'+stamp(ts)+'</small></div><div></div>';li.lastChild.textContent=node+": "+msg;
+    var ul=$("log");ul.insertBefore(li,ul.firstChild);while(ul.children.length>15){ul.removeChild(ul.lastChild)}$("empty").hidden=true;
+    if(level==="alert"&&!$("s-alerts").classList.contains("active")){unread++;$("badge").textContent=unread;$("badge").hidden=false}}
+  var charts={};
+  function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
+  function mk(id,sets,min){if(!window.Chart){$(id).parentNode.textContent="Chart library could not load.";return null}
+    var m=css("--t2"),g=css("--grid");
+    return new Chart($(id),{type:"line",data:{labels:[],datasets:sets.map(function(s){return{label:s[0],borderColor:s[1],backgroundColor:s[1],data:[],borderWidth:2,pointRadius:0,tension:.35,borderDash:s[2]||[]}})},
+      options:{animation:false,responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{labels:{color:m,boxWidth:12}}},scales:{x:{ticks:{color:m,maxTicksLimit:5},grid:{color:g}},y:{suggestedMin:min,ticks:{color:m},grid:{color:g}}}}})}
+  function push(c,l,v){if(!c)return;c.data.labels.push(l);c.data.datasets.forEach(function(d,i){d.data.push(v[i])});if(c.data.labels.length>40){c.data.labels.shift();c.data.datasets.forEach(function(d){d.data.shift()})}c.update()}
+  function tick(ts,quiet){var k=S.kitchen;
+    k.temp=walk(k.temp,.3,22,29);k.hum=walk(k.hum,1.2,38,62);S.salon.temp=walk(S.salon.temp,.2,20,26);S.salon.hum=walk(S.salon.hum,1,38,60);S.room.temp=walk(S.room.temp,.2,19,25);S.room.hum=walk(S.room.hum,1,40,62);
+    k.motion=Math.random()<.06?1:0;S.salon.motion=Math.random()<.05?1:0;S.room.motion=Math.random()<.04?1:0;k.vib=Math.random()<.015?1:0;S.door.vib=Math.random()<.01?1:0;
+    if(!quiet){if(k.vib)addEvent("alert","Kitchen","Vibration detected",ts);if(S.door.vib)addEvent("info","Door","Vibration detected",ts)}
+    var e=S.electricity;e.power=walk(e.power,160,250,1700);if(Math.random()<.04)e.power=1500+Math.random()*300;e.energy+=e.power*2/3600000;
+    var w=S.water;w.flow=Math.random()<.15?4+Math.random()*3:Math.max(0,w.flow-2);w.index+=w.flow/60*2/1000;water+=w.flow/60*2;gasM3+=.0004;
+    if(leak>0){leak--;k.gas+=(1800-k.gas)*.3;S.gas.gas+=(1500-S.gas.gas)*.25}else{k.gas=walk(k.gas+(420-k.gas)*.3,40,300,520);S.gas.gas=walk(S.gas.gas+(380-S.gas.gas)*.3,30,280,480)}
+    if(k.gas>THR&&!gasAlert){gasAlert=true;if(!quiet)addEvent("alert","Kitchen","Gas level above "+THR+" ppm",ts)}if(k.gas<800)gasAlert=false;
+    if(doorT>0){doorT--;if(doorT===0){S.door.open=0;if(!quiet)addEvent("info","Door","Closed",ts)}}
+    var l=stamp(ts);push(charts.t,l,[k.temp,S.salon.temp,S.room.temp]);push(charts.p,l,[e.power]);push(charts.g,l,[k.gas,S.gas.gas,THR]);paint()}
+  charts.t=mk("c-temp",[["Kitchen",css("--green")],["Salon",css("--blue")],["Room",css("--amber")]],18);
+  charts.p=mk("c-pow",[["Power",css("--teal")]],0);
+  charts.g=mk("c-gaschart",[["Kitchen",css("--amber")],["Gas node",css("--blue")],["Threshold",css("--red"),[6,4]]],0);
+  var now=Date.now();for(var i=30;i>0;i--){tick(now-i*2000,true)}tick(now,true);
+  setInterval(function(){$("clock").textContent="simulated data, "+new Date().toTimeString().slice(0,8)},1000);
+  setInterval(function(){if(!paused)tick(Date.now(),false)},2000);
+  var titles={overview:"Overview",nodes:"Nodes",alerts:"Alerts"};
+  [].forEach.call(document.querySelectorAll(".nav-btn"),function(b){b.addEventListener("click",function(){var s=b.dataset.s;
+    [].forEach.call(document.querySelectorAll(".nav-btn"),function(x){x.classList.toggle("active",x===b)});
+    [].forEach.call(document.querySelectorAll(".sec"),function(x){x.classList.toggle("active",x.id==="s-"+s)});
+    $("title").textContent=titles[s];if(s==="alerts"){unread=0;$("badge").hidden=true}window.scrollTo(0,0)})});
+  $("b-gas").addEventListener("click",function(){leak=8;addEvent("info","Demo","Gas leak simulation started",Date.now())});
+  $("b-door").addEventListener("click",function(){S.door.open=1;doorT=4;addEvent("info","Door","Opened",Date.now());paint()});
+  $("b-pause").addEventListener("click",function(){paused=!paused;this.textContent=paused?"Resume":"Pause";$("state").textContent=paused?"Stream paused":"Simulated stream";$("dot").className="dot"+(paused?"":" ok")});
+  var root=document.documentElement;try{var st=localStorage.getItem("bs-theme");if(st)root.setAttribute("data-theme",st)}catch(e){}
+  $("b-theme").addEventListener("click",function(){var dark=root.getAttribute("data-theme")?root.getAttribute("data-theme")==="dark":!matchMedia("(prefers-color-scheme: light)").matches;
+    var n=dark?"light":"dark";root.setAttribute("data-theme",n);try{localStorage.setItem("bs-theme",n)}catch(e){}
+    ["t","p","g"].forEach(function(k){var c=charts[k];if(!c)return;c.options.scales.x.grid.color=css("--grid");c.options.scales.y.grid.color=css("--grid");c.options.scales.x.ticks.color=css("--t2");c.options.scales.y.ticks.color=css("--t2");c.options.plugins.legend.labels.color=css("--t2");c.update()})});
+  var wv=$("welcome");if(matchMedia("(prefers-reduced-motion: reduce)").matches){wv.classList.add("hide")}else{setTimeout(function(){wv.classList.add("hide")},1700)}
+  setTimeout(function(){wv.style.display="none"},2400);
+})();
+</script>
+</body>
+</html>
