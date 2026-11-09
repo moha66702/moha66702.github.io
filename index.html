@@ -159,10 +159,10 @@ h3{font-weight:700;font-size:1.4rem}
 .meta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:600 .78rem/1.2 var(--sans);letter-spacing:.16em;text-transform:uppercase;padding:16px 0;border-bottom:1px solid var(--line);color:var(--muted)}
 .meta span:first-child{color:var(--accent)}
 .open i{display:inline-block;width:8px;height:8px;background:var(--accent);transform:rotate(45deg);margin-right:10px}
-.stage{position:relative;height:clamp(560px,58vw,1000px)}
+.stage{position:relative;height:clamp(600px,58vw,1000px)}
 .word{display:block;width:100%;height:auto;aspect-ratio:4/1;margin-top:1.5vw;user-select:none;-webkit-mask-image:linear-gradient(to bottom,#000 35%,transparent 96%);mask-image:linear-gradient(to bottom,#000 35%,transparent 96%)}
 .word text{fill:var(--btn);font:800 330px var(--display)}
-.cut{position:absolute;bottom:0;left:50%;transform:translateX(-36%);height:94%;width:auto;max-width:none;-webkit-mask-image:linear-gradient(to bottom,#000 82%,transparent);mask-image:linear-gradient(to bottom,#000 82%,transparent)}
+.cut{position:absolute;bottom:0;left:50%;transform:translateX(-36%);height:88%;width:auto;max-width:none;object-fit:contain;object-position:center top;-webkit-mask-image:linear-gradient(to bottom,#000 88%,transparent);mask-image:linear-gradient(to bottom,#000 88%,transparent)}
 .intro{position:absolute;left:0;bottom:36px;width:min(380px,36%)}
 .hello{font:3.2rem/1 "Mrs Saint Delafield",cursive;margin:0 0 -4px}
 .hero h1{font-size:clamp(3.2rem,8.4vw,6.4rem);line-height:.88;margin:0 0 14px;font-weight:800}
@@ -202,7 +202,7 @@ h3{font-weight:700;font-size:1.4rem}
 @media (max-width:900px){.proc{grid-template-columns:1fr}.cards{grid-template-columns:1fr}}
 @media (max-width:820px){
   .stage{height:auto;padding-bottom:28px}
-  .cut{position:relative;display:block;transform:none;left:auto;height:auto;width:min(80%,420px);margin:-9vw auto 0}
+  .cut{position:relative;display:block;transform:none;left:auto;height:auto;width:min(80%,420px);margin:12px auto 0;object-fit:contain;object-position:center top}
   .intro{position:static;width:auto;margin-top:8px}
   .stats{position:static;width:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px}
   .stats li{flex-direction:column;align-items:flex-start;gap:6px}
