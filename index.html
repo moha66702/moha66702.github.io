@@ -251,9 +251,108 @@ button.btn{cursor:pointer;background:transparent}button.btn:hover{border-color:v
 @media (max-width:900px){.ct{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);min-height:0;gap:24px}.ct-img{grid-column:1/-1;width:min(78%,520px);height:430px;margin:0 auto;object-position:center bottom}}
 @media (max-width:700px){.ct{grid-template-columns:1fr;gap:20px}.ct-img{grid-column:auto;width:min(92%,440px);height:390px;margin:0 auto;object-position:center top}}
 @media (max-width:420px){.ct-img{height:340px;width:100%}}
+
+/* ===== Motion layer ===== */
+#progress{position:fixed;top:0;left:0;right:0;height:2px;background:var(--btn);transform-origin:left;transform:scaleX(0);z-index:60;pointer-events:none}
+.hello{width:fit-content}
+.airbar{height:4px;background:var(--line);margin-top:12px;position:relative;overflow:hidden}
+.airbar i{position:absolute;inset:0;background:var(--btn);transform-origin:left;transform:scaleX(.2)}
+.airlbl{display:flex;justify-content:space-between;font:600 .72rem var(--sans);color:var(--muted);margin-top:5px;letter-spacing:.08em;text-transform:uppercase}
+.diagram .pk{fill:var(--btn)}
+.diagram .ring{fill:none;stroke:var(--btn);stroke-width:2;opacity:0;transition:opacity .5s}
+.open i{position:relative}
+
+@media (prefers-reduced-motion:no-preference){
+  @keyframes rise{from{opacity:0;translate:0 26px}to{opacity:1;translate:0 0}}
+  @keyframes risesm{from{opacity:0;translate:0 10px}to{opacity:1;translate:0 0}}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  @keyframes wordin{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+  @keyframes write{from{clip-path:inset(-15% 100% -15% 0)}to{clip-path:inset(-15% -6% -15% 0)}}
+  @keyframes ping{0%{opacity:.8;scale:1}80%,100%{opacity:0;scale:2.4}}
+  @keyframes breathe{0%,100%{opacity:.6}50%{opacity:1}}
+  @keyframes starpulse{0%,100%{scale:1}50%{scale:1.4}}
+  @keyframes flow{to{stroke-dashoffset:-14}}
+
+  /* hero load sequence */
+  .meta{animation:fade .8s ease backwards}
+  .word{animation:wordin 1.25s cubic-bezier(.65,0,.2,1) .1s backwards}
+  .cut{animation:rise 1s cubic-bezier(.2,.7,.2,1) .45s backwards}
+  .intro>*{animation:rise .8s cubic-bezier(.2,.7,.2,1) backwards}
+  .intro>.hello{animation:write 1.1s cubic-bezier(.4,0,.2,1) .6s backwards}
+  .intro>:nth-child(2){animation-delay:.8s}
+  .intro>:nth-child(3){animation-delay:.92s}
+  .intro>:nth-child(4){animation-delay:1.02s}
+  .intro>:nth-child(5){animation-delay:1.12s}
+  .stats li{animation:rise .8s cubic-bezier(.2,.7,.2,1) backwards}
+  .stats li:nth-child(1){animation-delay:.95s}
+  .stats li:nth-child(2){animation-delay:1.1s}
+  .stats li:nth-child(3){animation-delay:1.25s}
+
+  /* status marker */
+  .open i::after{content:"";position:absolute;inset:-1px;border:1px solid var(--accent);animation:ping 2.4s ease-out infinite}
+
+  /* nav underline sweep (desktop) */
+  @media (min-width:721px){
+    nav a{position:relative}
+    nav a::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.2,.7,.2,1)}
+    nav a:hover::after,nav a[aria-current="true"]::after{transform:scaleX(1)}
+    nav a:hover,nav a[aria-current="true"]{border-bottom-color:transparent}
+  }
+
+  /* buttons and controls */
+  .btn,.tab,.tbtn{transition:translate .2s ease,background-color .2s ease,border-color .2s ease,color .2s ease,filter .2s ease}
+  .btn:hover{translate:0 -2px}
+  .btn.primary:hover{filter:brightness(1.12)}
+  .hot{transition:background-color .2s ease,scale .2s ease}
+  .hot:hover{scale:1.1}
+  .hot:not(.on)::after{content:"";position:absolute;inset:-2px;border:2px solid var(--btn);border-radius:3px;animation:ping 2.4s ease-out infinite;pointer-events:none}
+  .hot:nth-child(2)::after{animation-delay:.6s}
+  .hot:nth-child(3)::after{animation-delay:1.2s}
+  .hot:nth-child(4)::after{animation-delay:1.8s}
+  .plate.touched .hot::after{display:none}
+
+  /* project cards */
+  .card{transition:border-color .25s ease,translate .3s cubic-bezier(.2,.7,.2,1),box-shadow .3s ease}
+  .card:hover,.card:focus-visible{translate:0 -4px;box-shadow:0 16px 34px rgba(0,0,0,.28)}
+  .card .thumb{transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+  .card:hover .thumb,.card:focus-visible .thumb{transform:scale(1.05)}
+  .card svg.arr{transition:translate .3s cubic-bezier(.2,.7,.2,1)}
+  .card:hover svg.arr,.card:focus-visible svg.arr{translate:6px 0}
+
+  /* node diagram */
+  .diagram line{transition:stroke .3s ease,stroke-width .3s ease}
+  .diagram line.on{stroke-dasharray:7 7;animation:flow .9s linear infinite}
+  .diagram .n rect{transition:fill .3s ease,stroke .3s ease}
+  .diagram .n text{transition:fill .3s ease}
+
+  /* panels re-animate whenever their content is replaced */
+  #panel>*,#hwpanel>*{animation:risesm .45s cubic-bezier(.2,.7,.2,1) backwards}
+  #panel>p,#hwpanel>p{animation-delay:.05s}
+  #panel>ul,#hwpanel>ul{animation-delay:.1s}
+
+  /* LoRa airtime bar */
+  .airbar i{transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+
+  /* scroll reveal */
+  .rv{opacity:0;translate:0 20px;transition:opacity .7s cubic-bezier(.2,.7,.2,1) var(--d,0ms),translate .7s cubic-bezier(.2,.7,.2,1) var(--d,0ms)}
+  .rv.in{opacity:1;translate:0 0}
+  h2.rv::after{transform-origin:left;transform:scaleX(0);transition:transform 1.1s cubic-bezier(.65,0,.2,1) calc(var(--d,0ms) + .25s)}
+  h2.rv.in::after{transform:scaleX(1)}
+  .draw *{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.1s cubic-bezier(.3,.6,.2,1) .3s}
+  .draw.drawn *{stroke-dashoffset:0}
+
+  /* contact */
+  .ct::after{animation:breathe 7s ease-in-out infinite}
+  .star{animation:starpulse 3.2s ease-in-out infinite}
+
+  /* legal pages and theme switch */
+  .legal:not([hidden]){animation:rise .5s cubic-bezier(.2,.7,.2,1) backwards}
+  .theme-fade,.theme-fade *,.theme-fade *::before,.theme-fade *::after{transition:background-color .35s ease,color .35s ease,border-color .35s ease,fill .35s ease,stroke .35s ease!important}
+}
 </style>
 </head>
 <body>
+<div id="progress" aria-hidden="true"></div>
 <div id="main-view">
 <header class="top"><div class="wrap">
   <a class="brand" href="#top">Mohamed</a>
@@ -339,6 +438,7 @@ button.btn{cursor:pointer;background:transparent}button.btn:hover{border-color:v
         <label>Payload (bytes)<input id="pl" type="number" min="1" max="51" value="12" inputmode="numeric"></label>
       </div>
       <div class="out" aria-live="polite"><strong id="toa">0 ms</strong><span id="toa-note"></span></div>
+      <div class="airbar" aria-hidden="true"><i id="airfill"></i></div><div class="airlbl" aria-hidden="true"><span>5 ms</span><span>3 s</span></div>
       <p class="fixed">Fixed as in BatiSense Pro: 433 MHz, coding rate 4/5, sync word 0x34, SX1278 radio. Defaults are the values I settled on after bench debugging.</p>
     </div>
     <div class="case">
@@ -522,6 +622,150 @@ button.btn{cursor:pointer;background:transparent}button.btn:hover{border-color:v
   });
   [].forEach.call(document.querySelectorAll('.diagram .n'),function(g){g.addEventListener('click',function(){pick(g.dataset.n)})});
   [].forEach.call(document.querySelectorAll('.hot'),function(b){b.addEventListener('click',function(){pick(b.dataset.n)})});pick('kitchen');
+})();
+</script>
+<script>
+/* motion layer */
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var root=document.documentElement;
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hasIO='IntersectionObserver' in window;
+
+  /* scroll progress line */
+  var bar=$('progress'),tick=false;
+  function prog(){tick=false;var h=root.scrollHeight-window.innerHeight;bar.style.transform='scaleX('+(h>0?Math.min(1,window.scrollY/h):0).toFixed(4)+')'}
+  window.addEventListener('scroll',function(){if(!tick){tick=true;requestAnimationFrame(prog)}},{passive:true});
+  window.addEventListener('resize',prog);prog();
+
+  /* smooth theme switch */
+  var tb=$('theme-btn');
+  if(tb&&!reduce){tb.addEventListener('click',function(){root.classList.add('theme-fade');setTimeout(function(){root.classList.remove('theme-fade')},450)})}
+
+  function tween(from,to,dur,draw,done){
+    var t0=null,id;
+    function step(t){
+      if(t0===null){t0=t}
+      var p=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-p,3);
+      if(p<1){draw(from+(to-from)*e);id=requestAnimationFrame(step)}else if(done){done()}
+    }
+    id=requestAnimationFrame(step);
+    return function(){cancelAnimationFrame(id)};
+  }
+
+  /* hero stat count up */
+  if(!reduce){
+    [].forEach.call(document.querySelectorAll('.stats b'),function(b,i){
+      var n=parseInt(b.textContent,10);if(!n){return}
+      b.textContent='0';
+      setTimeout(function(){tween(0,n,900,function(v){b.textContent=String(Math.round(v))},function(){b.textContent=String(n)})},1000+i*150);
+    });
+  }
+
+  /* hardware hotspots: stop pulsing after first use */
+  var plate=document.querySelector('.plate');
+  if(plate){plate.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('.hot')){plate.classList.add('touched')}})}
+
+  /* LoRa calculator: animated number and airtime bar */
+  var toaEl=$('toa'),fill=$('airfill'),live=toaEl?toaEl.parentNode:null;
+  if(toaEl&&fill){
+    var shown=parseFloat(toaEl.textContent)||0,stop=null;
+    var fmt=function(v){return (v<10?v.toFixed(1):String(Math.round(v)))+' ms'};
+    var setBar=function(ms){
+      var f=(Math.log(Math.max(ms,5))-Math.log(5))/(Math.log(3000)-Math.log(5));
+      fill.style.transform='scaleX('+Math.max(.03,Math.min(1,f)).toFixed(3)+')';
+    };
+    setBar(shown);
+    ['sf','bw','pl'].forEach(function(id){
+      $(id).addEventListener('input',function(){
+        var target=parseFloat(toaEl.textContent)||0;
+        setBar(target);
+        if(reduce){shown=target;return}
+        if(stop){stop()}
+        toaEl.textContent=fmt(shown);
+        if(live){live.setAttribute('aria-live','off')}
+        var from=shown;
+        stop=tween(from,target,450,function(v){shown=v;toaEl.textContent=fmt(v)},function(){
+          shown=target;
+          if(live){live.setAttribute('aria-live','polite')}
+          toaEl.textContent=fmt(target);
+        });
+      });
+    });
+  }
+
+  /* scroll reveal */
+  if(!reduce&&hasIO){
+    var groups=['section.block h2','.cards .card','.hw .plate','.hw > div:last-child','.proj-grid > div','.tool','.case > h3','.case > p','.problems article','.steps li','.openbox','.entry','.skills > div','#skills .wrap > p','.ct-l','.ct-rows li','.ct-img'];
+    var els=[];
+    groups.forEach(function(sel){
+      [].forEach.call(document.querySelectorAll(sel),function(el){
+        if(el.classList.contains('rv')){return}
+        el.classList.add('rv');els.push(el);
+      });
+    });
+    [].forEach.call(document.querySelectorAll('.steps .ic svg, .ct .circ svg'),function(s){
+      [].forEach.call(s.querySelectorAll('path,rect,circle'),function(n){n.setAttribute('pathLength','1')});
+      s.classList.add('draw');
+    });
+    var io=new IntersectionObserver(function(es){
+      var k=0;
+      es.forEach(function(e){
+        if(!e.isIntersecting){return}
+        var el=e.target,d=Math.min(k++,5)*85;
+        io.unobserve(el);
+        el.style.setProperty('--d',d+'ms');
+        el.classList.add('in');
+        [].forEach.call(el.querySelectorAll('svg.draw'),function(s){s.classList.add('drawn')});
+        setTimeout(function(){el.classList.remove('rv','in');el.style.removeProperty('--d')},1900+d);
+      });
+    },{threshold:.12,rootMargin:'0px 0px -6% 0px'});
+    els.forEach(function(el){io.observe(el)});
+  }
+
+  /* data packets travelling through the node diagram */
+  var svg=document.querySelector('svg.diagram');
+  if(svg&&!reduce){
+    var NS='http://www.w3.org/2000/svg';
+    var L={kitchen:[150,60,300,150],energy:[150,150,300,150],water:[150,240,300,150],gateway:[390,150,450,150]};
+    var ring=document.createElementNS(NS,'rect');
+    ring.setAttribute('class','ring');ring.setAttribute('x','297');ring.setAttribute('y','117');ring.setAttribute('width','96');ring.setAttribute('height','66');
+    svg.appendChild(ring);
+    var T=4.4;
+    var P=[
+      {k:'kitchen',s:0,d:1.2},{k:'energy',s:.55,d:1.2},{k:'water',s:1.1,d:1.2},
+      {k:'gateway',s:1.2,d:.6,fl:1},{k:'gateway',s:1.75,d:.6,fl:1},{k:'gateway',s:2.3,d:.6,fl:1}
+    ];
+    P.forEach(function(p){
+      var c=document.createElementNS(NS,'circle');
+      c.setAttribute('class','pk');c.setAttribute('r','3.5');c.setAttribute('visibility','hidden');
+      svg.appendChild(c);p.el=c;
+    });
+    var run=false,vis=false,t0=performance.now();
+    var ease=function(x){return x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2};
+    var frame=function(now){
+      if(!run){return}
+      var t=((now-t0)/1000)%T;
+      var on=svg.querySelector('.n.on'),act=on?on.getAttribute('data-n'):null;
+      P.forEach(function(p){
+        var l=t-p.s;
+        if(l>=0&&l<=p.d){
+          var f=ease(l/p.d),g=L[p.k];
+          p.el.setAttribute('cx',(g[0]+(g[2]-g[0])*f).toFixed(1));
+          p.el.setAttribute('cy',(g[1]+(g[3]-g[1])*f).toFixed(1));
+          p.el.setAttribute('r',p.k===act?5:3.5);
+          p.el.setAttribute('visibility','visible');
+          if(!p.on){p.on=true;if(p.fl){ring.style.opacity='.9';setTimeout(function(){ring.style.opacity='0'},160)}}
+        }else{p.el.setAttribute('visibility','hidden');p.on=false}
+      });
+      requestAnimationFrame(frame);
+    };
+    var setRun=function(v){if(v&&!run){run=true;requestAnimationFrame(frame)}else if(!v){run=false}};
+    if(hasIO){
+      new IntersectionObserver(function(es){vis=es[0].isIntersecting;setRun(vis&&!document.hidden)}).observe(svg);
+      document.addEventListener('visibilitychange',function(){setRun(vis&&!document.hidden)});
+    }
+  }
 })();
 </script>
 <script>
